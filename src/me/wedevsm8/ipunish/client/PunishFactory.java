@@ -22,7 +22,10 @@ public abstract class PunishFactory
 	
 	public static PunishClient createClient(UUID uuid)
 	{
-		if(!(_clientMap.containsKey(uuid)))
+		if(_clientMap == null)
+			_clientMap = new HashMap<>();
+		
+		if(!_clientMap.containsKey(uuid))
 		{
 			PunishClient punishClient = new PunishClient(uuid);
 			
@@ -31,15 +34,34 @@ public abstract class PunishFactory
 			return punishClient;
 		}
 		
-		return _clientMap.get(uuid);
+		return null;
+	}
+	
+	public static PunishClient getClient(Player player)
+	{
+		if(_clientMap.containsKey(player.getUniqueId()))
+			return _clientMap.get(player.getUniqueId());
+		
+		return null;
 	}
 	
 	public static boolean removeClient(PunishClient punishClient)
 	{
+		if(punishClient == null)
+			return false;
+		
+		if(_clientMap == null)
+			return false;
+		
+		if(punishClient.getPlayer() == null)
+			return false;
+		
 		if(!(_clientMap.containsKey(punishClient.getPlayer().getUniqueId())))
 			return false;
 		
 		_clientMap.remove(punishClient.getPlayer().getUniqueId());
+		
+		punishClient.destroy();
 		
 		return true;
 	}
@@ -49,7 +71,7 @@ public abstract class PunishFactory
 	{
 		PunishClient punishClient = createClient(target.getUniqueId());
 		
-		final Inventory punishInventory = Bukkit.createInventory(null, 54, "(iPunish) " + target.getName());
+		final Inventory punishInventory = Bukkit.createInventory(null, 54, "Punishing " + target.getName());
 		
 		ItemStack muteOffense = new ItemStack(Material.BOOK_AND_QUILL, 1);
 		ItemStack warning = new ItemStack(Material.PAPER, 1);

@@ -8,6 +8,7 @@ import me.wedevsm8.ipunish.client.PunishClient;
 import me.wedevsm8.ipunish.client.PunishFactory;
 import me.wedevsm8.ipunish.util.UtilTime;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,7 +31,7 @@ public class PunishmentDetector
 		
 		this._silencedList = new ArrayList<UUID>();
 		
-		this._plugin.getServer().getPluginManager().registerEvents(this, this._plugin);
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -64,7 +65,7 @@ public class PunishmentDetector
 	{
 		if(this._silencedList.contains(event.getPlayer().getUniqueId()))
 		{
-			PunishClient punishClient = PunishFactory.createClient(event.getPlayer().getUniqueId());
+			PunishClient punishClient = PunishFactory.getClient(event.getPlayer());
 			
 			event.getPlayer().sendMessage(ChatColor.GOLD + "[iPunish] " + ChatColor.AQUA + "Shhh. You have been muted by " + punishClient.getLatestPunishment().getIssuer().getName() + " for " + punishClient.getLatestPunishment().getReason() + ".");
 			event.getPlayer().sendMessage(ChatColor.BOLD + "[iPunish] " + ChatColor.AQUA + "You are muted for " + ChatColor.GREEN + UtilTime.convertString(punishClient.getLatestPunishment().getPunishmentType().getRawTime()));
@@ -76,10 +77,8 @@ public class PunishmentDetector
 	@EventHandler
 	public void Disconnect(PlayerQuitEvent event)
 	{
-		PunishClient punishClient = PunishFactory.createClient(event.getPlayer().getUniqueId());
+		PunishClient punishClient = PunishFactory.getClient(event.getPlayer());
 		
 		PunishFactory.removeClient(punishClient);
-		
-		punishClient.destroy();
 	}
 }

@@ -67,7 +67,7 @@ public class iPunish
 				
 				System.err.println("(iPunish) ERROR loadConfig: Database settings not configured.");
 				
-				Bukkit.getPluginManager().disablePlugin(this);
+				Bukkit.shutdown();
 			}
 			
 			FileConfiguration fc = YamlConfiguration.loadConfiguration(_configFile);
